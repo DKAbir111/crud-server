@@ -39,7 +39,28 @@ async function run() {
             const result = await usersCollection.insertOne(user);
             res.send(result);
         })
+        //update
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await usersCollection.findOne(query);
+            res.send(result);
+        })
 
+        app.put('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const user = req.body;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const updateUser = {
+                $set: {
+                    name: user.name,
+                    email: user.email
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updateUser, options);
+            res.send(result);
+        })
         //delete
         app.delete('/user/:id', async (req, res) => {
             const id = req.params.id;
